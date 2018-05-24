@@ -106,19 +106,15 @@ def isThereWinInDirection(board, lastMove, direction):
 
 
 def checkLastMoveForWin(state, lastMove):
-    win = False
-
-    if isValidDiagonal(lastMove) and isThereWinInDirection(state.board, lastMove, Direction.DIAGONAL):
+    if (
+            (isValidDiagonal(lastMove) and isThereWinInDirection(state.board, lastMove, Direction.DIAGONAL))
+             or (isValidAntiDiagonal(lastMove) and isThereWinInDirection(state.board, lastMove, Direction.ANTIDIAGONAL))
+             or isThereWinInDirection(state.board, lastMove, Direction.ROW)
+             or isThereWinInDirection(state.board, lastMove, Direction.COLUMN)
+    ):
         win = True
-
-    if isValidAntiDiagonal(lastMove) and isThereWinInDirection(state.board, lastMove, Direction.ANTIDIAGONAL):
-        win = True
-
-    if isThereWinInDirection(state.board, lastMove, Direction.ROW):
-        win = True
-
-    if isThereWinInDirection(state.board, lastMove, Direction.COLUMN):
-        win = True
+    else:
+        win = False
 
     return setWinState(state, win)
 
