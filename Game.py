@@ -89,32 +89,30 @@ def getMoveFromPlayer(state, playersInfo):
     return userInput
 
 
-def getSquaresInDirection(direction):
-    return {
-        Direction.ROW: getSquaresOnSameRow,
-        Direction.COLUMN: getSquaresOnSameColumn,
-        Direction.DIAGONAL: getSquaresOnSameDiagonal,
-        Direction.ANTIDIAGONAL: getSquaresOnSameAntiDiagonal
-    }.get(direction, lambda: print("Invalid direction selected"))  # Default case
+def isThereWinInDirection(board, lastMove, getPiecesFunc):
+    if (
+            (getPiecesFunc is getSquaresOnSameDiagonal and not isValidDiagonal(lastMove)) or
+            (getPiecesFunc is getSquaresOnSameAntiDiagonal and not isValidAntiDiagonal(lastMove))
+    ):
+        win = False
+    else:
+        pieces = getPiecesFunc(board, lastMove)
+        win = allSquaresAreSamePiece(pieces)
 
-
-def isThereWinInDirection(board, lastMove, direction):
-    getPieces = getSquaresInDirection(direction)
-    pieces = getPieces(board, lastMove)
-
-    return allSquaresAreSamePiece(pieces)
+    return win
 
 
 def checkLastMoveForWin(state, lastMove):
-    if (
-            (isValidDiagonal(lastMove) and isThereWinInDirection(state.board, lastMove, Direction.DIAGONAL))
-             or (isValidAntiDiagonal(lastMove) and isThereWinInDirection(state.board, lastMove, Direction.ANTIDIAGONAL))
-             or isThereWinInDirection(state.board, lastMove, Direction.ROW)
-             or isThereWinInDirection(state.board, lastMove, Direction.COLUMN)
-    ):
-        win = True
-    else:
-        win = False
+    getPiecesFuncList = [
+        getSquaresOnSameRow,
+        getSquaresOnSameColumn,
+        getSquaresOnSameDiagonal,
+        getSquaresOnSameAntiDiagonal
+    ]
+
+    listOfWinsInEachDirection = map(lambda x: isThereWinInDirection(state.board, lastMove, x), getPiecesFuncList)
+
+    win = any(winInDirection is True for winInDirection in listOfWinsInEachDirection)
 
     return setWinState(state, win)
 

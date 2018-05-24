@@ -2,13 +2,6 @@
 from Coordinates import *
 
 
-class Direction(Enum):
-    ROW = 0
-    COLUMN = 1
-    DIAGONAL = 2
-    ANTIDIAGONAL = 3
-
-
 def placePiece(board, index, piece):
     # deep copy list
     newBoard = list(board)
