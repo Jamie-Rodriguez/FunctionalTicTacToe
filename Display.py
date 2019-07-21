@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import os
-from Constants import BOARD_SIZE
+
 
 """
     NOTE: If planning to use BOARD_SIZE > 3, need to adjust printing functions
@@ -10,43 +10,51 @@ from Constants import BOARD_SIZE
 
 
 def clearConsole():
-    if os.name == "posix":  # Unix/Linux/MacOS/BSD/etc
+    if os.name == "posix": # Unix/Linux/MacOS/BSD/etc
         os.system("clear")
-    elif os.name in ("nt", "dos", "ce"):  # DOS/Windows
+    elif os.name in ("nt", "dos", "ce"): # DOS/Windows
         os.system('CLS')
-    else:  # Other??
+    else: # Other??
         print('\n' * 1000)
 
 
-def printBoard(board):
+def printBoard(board, boardWidth, boardHeight):
     rowNum = 0
 
-    row = __getRow(board, rowNum)
+    row = __getRow(boardWidth, rowNum, board)
 
     __printRow(row)
     rowNum += 1
 
-    while rowNum < BOARD_SIZE:
-        row = __getRow(board, rowNum)
+    while rowNum < boardHeight:
+        row = __getRow(boardWidth, rowNum, board)
 
-        __printRowSeparator()
+        __printRowSeparator(boardWidth)
         __printRow(row)
 
         rowNum += 1
 
 
-def printHelpGraphic():
+def printHelpGraphic(boardWidth, boardHeight):
     print("Enter number to place your move:")
-    __helpGraphic(BOARD_SIZE - 1)
+    __helpGraphic(boardWidth, boardHeight - 1)
     print("\n")
 
 
 # ----------------------------- Private Functions ------------------------------
 
 
-def __getRow(board, rowNum):
-    start = rowNum * BOARD_SIZE
-    end = (rowNum + 1) * BOARD_SIZE - 1
+def __getStartIndexOfRow(boardWidth, rowNum):
+    return rowNum * boardWidth
+
+
+def __getEndIndexOfRow(boardWidth, rowNum):
+    return __getStartIndexOfRow(rowNum, boardWidth) + boardWidth - 1
+
+
+def __getRow(boardWidth, rowNum, board):
+    start = __getStartIndexOfRow(boardWidth, rowNum)
+    end = __getEndIndexOfRow(boardWidth, rowNum)
     # Slicing in python is over the interval [start, end)
     row = board[start: end + 1]
 
@@ -59,22 +67,22 @@ def __printRow(row):
     print(" {} ".format(row[-1].value))
 
 
-def __printRowSeparator():
-    for i in range(0, BOARD_SIZE - 1):
+def __printRowSeparator(boardWidth):
+    for i in range(0, boardWidth - 1):
         print("---+", end="")
     print("---")
 
 
-def __helpGraphic(rowNum):
-    start = rowNum * BOARD_SIZE
-    end = start + BOARD_SIZE - 1
+def __helpGraphic(boardWidth, rowNum):
+    start = __getStartIndexOfRow(boardWidth, rowNum)
+    end = __getEndIndexOfRow(boardWidth, rowNum)
 
     if rowNum == 0:
         __printRowWithIndexes(start, end)
         return
     else:
-        __helpGraphic(rowNum - 1)
-        __printRowSeparator()
+        __helpGraphic(boardWidth, rowNum - 1)
+        __printRowSeparator(boardWidth)
         __printRowWithIndexes(start, end)
 
 

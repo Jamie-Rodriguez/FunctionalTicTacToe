@@ -9,89 +9,154 @@ testBoard = [Square.O, Square.EMPTY, Square.EMPTY,
              Square.O, Square.EMPTY, Square.X]
 
 
-# TODO!
-"""
-Can't test anything that reads from BOARD_SIZE in a general case as
-they rely on size of board, which is a hard-coded, compile-time constant.
-This breaks the referential transparency of the functions
-
-TODO: fix the following functions to remain pure: The basic functions that read from BOARD_SIZE, i.e.
-    getRowNum
-    getColNum
-    nextIndexInRow
-    nextIndexInColumn
-    nextIndexInDiagonal
-    nextIndexInAntiDiagonal
-
-The following functions are affected as a consequence of this impurity:
-    isValidDiagonal()
-    isValidAntiDiagonal()
-    getSquaresOnSameRow()
-    getSquaresOnSameColumn()
-    getSquaresOnSameDiagonal()
-    getSquaresOnSameAntiDiagonal()
-    isThereWinInDirection()
-    checkLastMoveForWin()
-"""
-
-
 class TestCoordinates(TestCase):
 
-    def mapAssertionHelper(self, expectedOutputs, inputs, f):
-        # map converts list into iterable map object, cast back
-        self.assertEqual(expectedOutputs, list(map(lambda x: f(x), inputs)))
+    def mapAssertionHelper(self, expectedOutputs, width, inputs, f):
+        self.assertEqual(expectedOutputs, list(map(lambda x: f(width, x), inputs)))
+
+    def test_getMaxIndex(self):
+        width = 3
+        height = 5
+        expectedOutput = 14
+
+        self.assertEqual(expectedOutput, getMaxIndex(width, height))
 
     def test_getRowNum3x3(self):
+        width = 3
         inputs = range(9)
         expectedOutputs = [0, 0, 0, 1, 1, 1, 2, 2, 2]
 
-        self.mapAssertionHelper(expectedOutputs, inputs, getRowNum)
+        outputs = list(map(lambda x: getRowNum(width, x), inputs))
+
+        self.assertEqual(expectedOutputs, outputs)
 
     def test_getColNum3x3(self):
+        width = 3
         inputs = range(9)
         expectedOutputs = [0, 1, 2, 0, 1, 2, 0, 1, 2]
 
-        self.mapAssertionHelper(expectedOutputs, inputs, getColNum)
+        outputs = list(map(lambda x: getColNum(width, x), inputs))
+
+        self.assertEqual(expectedOutputs, outputs)
+
+    def test_isLeftColumn3x3(self):
+        width = 3
+        inputs = range(width * width)
+        expectedOutputs = [True, False, False, True, False, False, True, False, False]
+
+        outputs = list(map(lambda x: isLeftColumn(width, x), inputs))
+
+        self.assertEqual(expectedOutputs, outputs)
+
+    def test_isRightColumn3x3(self):
+        width = 3
+        inputs = range(width * width)
+        expectedOutputs = [False, False, True, False, False, True, False, False, True]
+
+        outputs = list(map(lambda x: isRightColumn(width, x), inputs))
+
+        self.assertEqual(expectedOutputs, outputs)
+
+    def test_isBottomRow3x3(self):
+        width = 3
+        height = 3
+        inputs = range(width * width)
+        expectedOutputs = [False, False, False, False, False, False, True, True, True]
+
+        outputs = list(map(lambda x: isBottomRow(width, height, x), inputs))
+
+        self.assertEqual(expectedOutputs, outputs)
 
     def test_nextIndexInRow3x3(self):
+        width = 3
+        height = 3
         inputs = range(9)
         expectedOutputs = [1, 2, 0, 4, 5, 3, 7, 8, 6]
 
-        self.mapAssertionHelper(expectedOutputs, inputs, nextIndexInRow)
+        outputs = list(map(lambda x: nextIndexInRow(width, height, x), inputs))
+
+        self.assertEqual(expectedOutputs, outputs)
 
     def test_nextIndexInColumn3x3(self):
+        width = 3
+        height = 3
         inputs = range(9)
         expectedOutputs = [3, 4, 5, 6, 7, 8, 0, 1, 2]
 
-        self.mapAssertionHelper(expectedOutputs, inputs, nextIndexInColumn)
+        outputs = list(map(lambda x: nextIndexInColumn(width, height, x), inputs))
 
-    """
-    Can't test isValidDiagonal() or isValidAntiDiagonal() in a general case as
-    they rely on size of board, which is a hard-coded, compile-time constant.
-    Number of pieces in a row for the diagonal and anti-diagonal directions varies with BOARD_SIZE.
-    TODO: Remove isValidDiagonal() and isValidAntiDiagonal()'s dependence on BOARD_SIZE
-    """
+        self.assertEqual(expectedOutputs, outputs)
+
     def test_nextIndexInDiagonal3x3(self):
+        width = 3
+        height = 3
         inputs = range(9)
         expectedOutputs = [4, 5, 2, 7, 8, 1, 6, 3, 0]
 
-        self.mapAssertionHelper(expectedOutputs, inputs, nextIndexInDiagonal)
+        outputs = list(map(lambda x: nextIndexInDiagonal(width, height, x), inputs))
+
+        self.assertEqual(expectedOutputs, outputs)
+
+    def test_nextIndexInDiagonal5x3(self):
+        width = 5
+        height = 3
+        inputs = range(15)
+        expectedOutputs = [6, 7, 8, 9, 4, 11, 12, 13, 14, 3, 10, 5, 0, 1, 2]
+
+        outputs = list(map(lambda x: nextIndexInDiagonal(width, height, x), inputs))
+
+        self.assertEqual(expectedOutputs, outputs)
+
+    def test_nextIndexInDiagonal3x5(self):
+        width = 3
+        height = 5
+        inputs = range(15)
+        expectedOutputs = [4, 5, 2, 7, 8, 1, 10, 11, 0, 13, 14, 3, 12, 9, 6]
+
+        outputs = list(map(lambda x: nextIndexInDiagonal(width, height, x), inputs))
+
+        self.assertEqual(expectedOutputs, outputs)
 
     def test_nextIndexInAntiDiagonal3x3(self):
+        width = 3
+        height = 3
         inputs = range(9)
         expectedOutputs = [0, 3, 4, 1, 6, 7, 2, 5, 8]
 
-        self.mapAssertionHelper(expectedOutputs, inputs, nextIndexInAntiDiagonal)
+        outputs = list(map(lambda x: nextIndexInAntiDiagonal(width, height, x), inputs))
+
+        self.assertEqual(expectedOutputs, outputs)
+
+    def test_nextIndexInAntiDiagonal5x3(self):
+        width = 5
+        height = 3
+        inputs = range(15)
+        expectedOutputs = [0, 5, 6, 7, 8, 1, 10, 11, 12, 13, 2, 3, 4, 9, 14]
+
+        outputs = list(map(lambda x: nextIndexInAntiDiagonal(width, height, x), inputs))
+
+        self.assertEqual(expectedOutputs, outputs)
+
+    def test_nextIndexInAntiDiagonal3x5(self):
+        width = 3
+        height = 5
+        inputs = range(15)
+        expectedOutputs = [0, 3, 4, 1, 6, 7, 2, 9, 10, 5, 12, 13, 8, 11, 14]
+
+        outputs = list(map(lambda x: nextIndexInAntiDiagonal(width, height, x), inputs))
+
+        self.assertEqual(expectedOutputs, outputs)
 
 
 class TestGameHelpers(TestCase):
 
-    def isValidDiagAntiDiagHelper(self, expectedOutputs, f, inputs):
-        # map converts list into iterable map object, cast back
-        self.assertEqual(expectedOutputs, list(map(lambda x: f(x), inputs)))
+    def isValidDiagAntiDiagHelper(self, expectedOutputs, f, dims, board, inputs):
+        actualOutputs = list(map(lambda i: f(dims, board, i), inputs))
+        
+        self.assertEqual(expectedOutputs, actualOutputs)
 
-    def getPiecesHelper(self, expectedOutputs, f, inputBoard):
-        actualOutputs = list(starmap(lambda i, x: f(inputBoard, i), enumerate(inputBoard)))
+    def getPiecesHelper(self, expectedOutputs, f, dims, inputBoard):
+        actualOutputs = list(starmap(lambda i, x: f(dims, inputBoard, i), enumerate(inputBoard)))
 
         self.assertEqual(expectedOutputs, actualOutputs)
 
@@ -111,7 +176,11 @@ class TestGameHelpers(TestCase):
         self.assertEqual(Square.O, getPieceOnSquare(input, 1))
         self.assertEqual(Square.X, getPieceOnSquare(input, 2))
 
-    # squareEmpty() does not need to be tested because it's just an equivalence...
+    def test_squareEmpty(self):
+        input = [Square.X, Square.O, Square.EMPTY]
+
+        self.assertEqual(False, squareEmpty(input, 1))
+        self.assertEqual(True, squareEmpty(input, 2))
 
     def test_boardFull(self):
         emptyBoard = [Square.EMPTY, Square.EMPTY, Square.EMPTY]
@@ -130,18 +199,21 @@ class TestGameHelpers(TestCase):
         self.assertEqual(True, allSquaresAreSamePiece(homogeneousBoard))
 
     def test_isValidDiagonal3x3(self):
+        boardDims = BoardDims(3, 3)
         inputs = range(9)
         expectedOutputs = [True, False, False, False, True, False, False, False, True]
 
-        self.isValidDiagAntiDiagHelper(expectedOutputs, isValidDiagonal, inputs)
+        self.isValidDiagAntiDiagHelper(expectedOutputs, isValidDiagonal, boardDims, testBoard, inputs)
 
     def test_isValidAntiDiagonal3x3(self):
+        boardDims = BoardDims(3, 3)
         inputs = range(9)
         expectedOutputs = [False, False, True, False, True, False, True, False, False]
 
-        self.isValidDiagAntiDiagHelper(expectedOutputs, isValidAntiDiagonal, inputs)
+        self.isValidDiagAntiDiagHelper(expectedOutputs, isValidAntiDiagonal, boardDims, testBoard, inputs)
 
     def test_getPiecesOnRow3x3(self):
+        boardDims = BoardDims(3, 3)
         expectedRow = [
             [Square.O, Square.EMPTY, Square.EMPTY],
             [Square.EMPTY, Square.EMPTY, Square.O],
@@ -154,9 +226,10 @@ class TestGameHelpers(TestCase):
             [Square.X, Square.O, Square.EMPTY]
         ]
 
-        self.getPiecesHelper(expectedRow, getSquaresOnSameRow, testBoard)
+        self.getPiecesHelper(expectedRow, getSquaresOnSameRow, boardDims, testBoard)
 
     def test_getPiecesOnColumn3x3(self):
+        boardDims = BoardDims(3, 3)
         expectedCol = [
             [Square.O,     Square.X,     Square.O],
             [Square.EMPTY, Square.X,     Square.EMPTY],
@@ -169,9 +242,10 @@ class TestGameHelpers(TestCase):
             [Square.X, Square.EMPTY, Square.EMPTY]
         ]
 
-        self.getPiecesHelper(expectedCol, getSquaresOnSameColumn, testBoard)
+        self.getPiecesHelper(expectedCol, getSquaresOnSameColumn, boardDims, testBoard)
 
     def test_getPiecesOnDiagonal3x3(self):
+        boardDims = BoardDims(3, 3)
         expectedDiag = [
             [Square.O, Square.X, Square.X],
             [Square.EMPTY, Square.EMPTY],
@@ -184,9 +258,10 @@ class TestGameHelpers(TestCase):
             [Square.X, Square.O, Square.X]
         ]
 
-        self.getPiecesHelper(expectedDiag, getSquaresOnSameDiagonal, testBoard)
+        self.getPiecesHelper(expectedDiag, getSquaresOnSameDiagonal, boardDims, testBoard)
 
     def test_getPiecesOnAntiDiagonal3x3(self):
+        boardDims = BoardDims(3, 3)
         expectedAntiDiag = [
             [Square.O],
             [Square.EMPTY, Square.X],
@@ -199,105 +274,195 @@ class TestGameHelpers(TestCase):
             [Square.X]
         ]
 
-        self.getPiecesHelper(expectedAntiDiag, getSquaresOnSameAntiDiagonal, testBoard)
+        self.getPiecesHelper(expectedAntiDiag, getSquaresOnSameAntiDiagonal, boardDims, testBoard)
 
 
 class TestGame(TestCase):
     def test_initialiseGame(self):
-        expectedOutput = State(
-                            win=False,
-                            turn=0,
-                            board=emptyBoard()
-                        )
+        width = 3
+        height = 3
+        expectedOutput = State(win=False,
+                               turn=0,
+                               board=[Square["EMPTY"]] * 9)
 
-        self.assertEqual(expectedOutput, initialiseGame())
+        self.assertEqual(expectedOutput, initialiseGameState(width, height))
 
     def test_setBoardState(self):
-        inputState = State(
-                        win=False,
-                        turn=0,
-                        board=[Square["EMPTY"]] * 3
-                    )
+        inputState = State(win=False,
+                           turn=0,
+                           board=[Square["EMPTY"]] * 3)
 
         inputBoard = [Square.EMPTY, Square.EMPTY, Square.X]
 
-        expectedOutput = State(
-                            win=False,
-                            turn=0,
-                            board=inputBoard
-                        )
+        expectedOutput = State(win=False,
+                               turn=0,
+                               board=inputBoard)
 
         self.assertEqual(expectedOutput, setBoardState(inputState, inputBoard))
 
     def test_setWinState(self):
-        inputState = State(
-            win=False,
-            turn=0,
-            board=[Square.EMPTY, Square.EMPTY, Square.X]
-        )
+        inputState = State(win=False,
+                           turn=0,
+                           board=[Square.EMPTY, Square.EMPTY, Square.X])
 
-        expectedOutput = State(
-            win=True,
-            turn=inputState.turn,
-            board=inputState.board
-        )
+        expectedOutput = State(win=True,
+                               turn=inputState.turn,
+                               board=inputState.board)
 
         self.assertEqual(expectedOutput, setWinState(inputState, True))
 
     def test_getCurrentPlayerInfo(self):
-        inputState = State(
-            win=False,
-            turn=1,
-            board=[Square.EMPTY, Square.EMPTY, Square.X]
-        )
+        inputState = State(win=False,
+                           turn=1,
+                           board=[Square.EMPTY, Square.EMPTY, Square.X])
 
-        inputPlayersInfo = (
-            Player(Agent.HUMAN,  Square.O),
-            Player(Agent.RANDOM, Square.X)
-        )
+        inputPlayersInfo = (Player(Agent.HUMAN,  Square.O),
+                            Player(Agent.RANDOM, Square.X))
 
         expectedOutput = inputPlayersInfo[inputState.turn]
 
         self.assertEqual(expectedOutput, getCurrentPlayerInfo(inputState, inputPlayersInfo))
 
     def test_togglePlayerTurn(self):
-        inputState = State(
-            win=False,
-            turn=1,
-            board=[Square.EMPTY, Square.EMPTY, Square.X]
-        )
+        inputState = State(win=False,
+                           turn=1,
+                           board=[Square.EMPTY, Square.EMPTY, Square.X])
 
         actualOutput = togglePlayerTurn(inputState)
 
-        expectedOutput = State(
-            win=inputState.win,
-            turn=0,
-            board=inputState.board
-        )
+        expectedOutput = State(win=inputState.win,
+                               turn=0,
+                               board=inputState.board)
 
         self.assertEqual(expectedOutput, actualOutput)
 
         actualOutput = togglePlayerTurn(actualOutput)
 
-        expectedOutput = State(
-            win=inputState.win,
-            turn=1,
-            board=inputState.board
-        )
+        expectedOutput = State(win=inputState.win,
+                               turn=1,
+                               board=inputState.board)
 
         self.assertEqual(expectedOutput, actualOutput)
 
     def test_getMoveFunctionForPlayer(self):
         self.assertEqual(getMoveFromHuman, getMoveFunctionForPlayer(Agent.HUMAN))
-
         self.assertEqual(getMoveFromAI, getMoveFunctionForPlayer(Agent.AI))
-
         self.assertEqual(getRandomMove, getMoveFunctionForPlayer(Agent.RANDOM))
+        # Can't test the default (error) case in this way
 
-        # Can't compare anonymous function in default case...
+    # Can't test getMoveFromHuman(), getMoveFromAI() or getRandomMove()
+    # and as a result, also can't test getMoveFromPlayer()
 
-    """
-    Can't test checkLastMoveForWin() in a general case as it relies on
-    isValidDiagonal() and isValidAntiDiagonal() which read compile-time constant BOARD_SIZE
-    See note above test_nextIndexInDiagonal3x3()
-    """
+    def test_isThereWinInDirection3x3(self):
+        boardDims = BoardDims(3, 3)
+        board = [Square.EMPTY, Square.O, Square.X,
+                 Square.EMPTY, Square.O, Square.O,
+                 Square.X,     Square.X, Square.X]
+        lastMove = 7
+
+        self.assertEqual(True,
+                         isThereWinInDirection(boardDims,
+                                               board,
+                                               lastMove,
+                                               getSquaresOnSameRow))
+        self.assertEqual(False,
+                         isThereWinInDirection(boardDims,
+                                               board,
+                                               lastMove,
+                                               getSquaresOnSameColumn))
+        self.assertEqual(False,
+                         isThereWinInDirection(boardDims,
+                                               board,
+                                               lastMove,
+                                               getSquaresOnSameDiagonal))
+        self.assertEqual(False,
+                         isThereWinInDirection(boardDims,
+                                               board,
+                                               lastMove,
+                                               getSquaresOnSameAntiDiagonal))
+
+    def test_isThereWinInDirection4x3(self):
+        boardDims = BoardDims(4, 3)
+        board = [Square.EMPTY, Square.O, Square.EMPTY, Square.X,
+                 Square.X,     Square.X, Square.X,     Square.X,
+                 Square.O,     Square.O, Square.EMPTY, Square.O]
+        lastMove = 5
+
+        self.assertEqual(True,
+                         isThereWinInDirection(boardDims,
+                                               board,
+                                               lastMove,
+                                               getSquaresOnSameRow))
+        self.assertEqual(False,
+                         isThereWinInDirection(boardDims,
+                                               board,
+                                               lastMove,
+                                               getSquaresOnSameColumn))
+        self.assertEqual(False,
+                         isThereWinInDirection(boardDims,
+                                               board,
+                                               lastMove,
+                                               getSquaresOnSameDiagonal))
+        self.assertEqual(False,
+                         isThereWinInDirection(boardDims,
+                                               board,
+                                               lastMove,
+                                               getSquaresOnSameAntiDiagonal))
+
+    def test_checkLastMoveForWin3x3(self):
+        boardDims = BoardDims(3, 3)
+
+        noWinBoard = [Square.EMPTY, Square.O,     Square.X,
+                      Square.EMPTY, Square.O,     Square.O,
+                      Square.X,     Square.EMPTY, Square.X]
+        turnNoWin = 6
+        inputStateNoWin = State(False, turnNoWin, noWinBoard)
+        lastMoveNoWin = 6
+
+        winBoard = [Square.EMPTY, Square.O, Square.X,
+                    Square.EMPTY, Square.O, Square.O,
+                    Square.X,     Square.X, Square.X]
+        turnWin = 7
+        inputStateWin = State(False, turnWin, winBoard)
+        lastMoveWin = 7
+
+        expectedNoWinState = State(False, turnNoWin, noWinBoard)
+        expectedWinState = State(True, turnWin, winBoard)
+
+        self.assertEqual(expectedNoWinState,
+                         checkLastMoveForWin(boardDims,
+                                             inputStateNoWin,
+                                             lastMoveNoWin))
+        self.assertEqual(expectedWinState,
+                         checkLastMoveForWin(boardDims,
+                                             inputStateWin,
+                                             lastMoveWin))
+
+    def test_checkLastMoveForWin4x3(self):
+        boardDims = BoardDims(4, 3)
+
+        noWinBoard = [Square.X,     Square.O,     Square.O,     Square.O,
+                      Square.EMPTY, Square.X,     Square.EMPTY, Square.EMPTY,
+                      Square.X,     Square.EMPTY, Square.EMPTY, Square.EMPTY]
+        turnNoWin = 6
+        inputStateNoWin = State(False, turnNoWin, noWinBoard)
+        lastMoveNoWin = 3
+
+        winBoard = [Square.X,     Square.O,     Square.O,     Square.O,
+                    Square.EMPTY, Square.X,     Square.EMPTY, Square.EMPTY,
+                    Square.X,     Square.EMPTY, Square.X,     Square.EMPTY]
+        turnWin = 7
+        inputStateWin = State(False, turnWin, winBoard)
+        lastMoveWin = 10
+
+        expectedNoWinState = State(False, turnNoWin, noWinBoard)
+        expectedWinState = State(True, turnWin, winBoard)
+
+        self.assertEqual(expectedNoWinState,
+                         checkLastMoveForWin(boardDims,
+                                             inputStateNoWin,
+                                             lastMoveNoWin))
+        self.assertEqual(expectedWinState,
+                         checkLastMoveForWin(boardDims,
+                                             inputStateWin,
+                                             lastMoveWin))

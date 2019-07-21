@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
+from Constants import Square
 from Coordinates import *
 
 
 def placePiece(board, index, piece):
+    # Is there a way to create newBoard in a functional way in python?
     # deep copy list
     newBoard = list(board)
 
@@ -27,48 +29,48 @@ def allSquaresAreSamePiece(listOfPieces):
     return len(set(listOfPieces)) == 1
 
 
-def isValidDiagonal(index):
-    return index % (BOARD_SIZE + 1) == 0
+def isValidDiagonal(boardDims, board, index):
+    return __scoringDiagInternal(getSquaresOnSameDiagonal, boardDims, board, index)
 
 
-# Need to exclude 0 and MAX_INDEX
-def isValidAntiDiagonal(index):
-    return (index % (BOARD_SIZE - 1) == 0) and (index % MAX_INDEX != 0)
+def isValidAntiDiagonal(boardDims, board, index):
+    return __scoringDiagInternal(getSquaresOnSameAntiDiagonal, boardDims, board, index)
 
 
-def getSquaresOnSameRow(board, index):
-    return __getSquaresInDirection(board, index, nextIndexInRow)
+def getSquaresOnSameRow(boardDims, board, index):
+    return __getSquaresInDirection(nextIndexInRow, boardDims, board, index)
 
 
-def getSquaresOnSameColumn(board, index):
-    return __getSquaresInDirection(board, index, nextIndexInColumn)
+def getSquaresOnSameColumn(boardDims, board, index):
+    return __getSquaresInDirection(nextIndexInColumn, boardDims, board, index)
 
 
-def getSquaresOnSameDiagonal(board, index):
-    return __getSquaresInDirection(board, index, nextIndexInDiagonal)
+def getSquaresOnSameDiagonal(boardDims, board, index):
+    return __getSquaresInDirection(nextIndexInDiagonal, boardDims, board, index)
 
 
-def getSquaresOnSameAntiDiagonal(board, index):
-    return __getSquaresInDirection(board, index, nextIndexInAntiDiagonal)
+def getSquaresOnSameAntiDiagonal(boardDims, board, index):
+    return __getSquaresInDirection(nextIndexInAntiDiagonal, boardDims, board, index)
 
 
 # ----------------------------- Private Functions ------------------------------
 
 
-def __getSquaresInDirection(board, index, nextIndexFunc):
-    return __getSquaresInDirectionInternal(board, index, index, nextIndexFunc)
+def __getSquaresInDirection(nextIndexFunc, dims, board, index):
+    return __getSquaresInDirectionInternal(nextIndexFunc, dims, board, index, index)
 
 
 """
     Parameters:
-        board            Game board state to check against
-        index            Index to be iterated on during looping; iterator
-                         Also defines the starting index to loop on
-        finalIndex       Stop looping once the next index = finalIndex; the base case
-                         Normally defined as the final index = starting index
-                         See example.
-        nextIndexFunc    Function that returns the next index to check;
-                         the direction to iterate indexes
+        nextIndexFunc        Function that returns the next index to check;
+                             the direction to iterate indexes
+        board                Game board to check against
+                             width and height are required by nextIndexFunc
+        index                Index to be iterated on during looping; iterator
+                             Also defines the starting index to loop on
+        finalIndex           Stop looping once the next index = finalIndex; the base case
+                             Normally defined as the final index = starting index
+                             See example.
 
     Assumptions:
         nextIndexFunc loops index in a cyclic pattern i.e. 0, 4, 8, 0, 4, 8, ...
@@ -84,15 +86,30 @@ def __getSquaresInDirection(board, index, nextIndexFunc):
 
     Returns:
         List of the pieces present along the direction defined by nextIndexFunc
-        
+
     Example Usage:
-        getPiecesInDirectionInternal(state, 4, 4, nextIndexInRow)
+        getPiecesInDirectionInternal(nextIndexInRow, state, 4, 4)
 """
 
 
-def __getSquaresInDirectionInternal(board, index, finalIndex, nextIndexFunc):
-    if nextIndexFunc(index) == finalIndex:
+def __getSquaresInDirectionInternal(nextIndexFunc, dims, board, finalIndex, index):
+    if nextIndexFunc(dims.w, dims.h, index) == finalIndex:
         return [getPieceOnSquare(board, index)]
 
-    return [getPieceOnSquare(board, index)] + __getSquaresInDirectionInternal(board, nextIndexFunc(index), finalIndex,
-                                                                              nextIndexFunc)
+    return [getPieceOnSquare(board, index)] + \
+           __getSquaresInDirectionInternal(nextIndexFunc,
+                                           dims,
+                                           board,
+                                           finalIndex,
+                                           nextIndexFunc(dims.w, dims.h, index))
+
+
+def __scoringDiagInternal(findSquaresInDirectionFunc, boardDims, board, index):
+    squaresFoundOnDiagonal = findSquaresInDirectionFunc(boardDims, board, index)
+
+    if len(squaresFoundOnDiagonal) >= min(boardDims):
+        isValid = True
+    else:
+        isValid = False
+
+    return isValid

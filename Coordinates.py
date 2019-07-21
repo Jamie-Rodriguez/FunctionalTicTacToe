@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from Constants import *
+import math
 
 """
     Coordinate system for grid of size 3:
@@ -11,19 +11,33 @@ from Constants import *
      6 | 7 | 8
 """
 
+def getMaxIndex(width, height):
+    return width * height - 1
 
-def getRowNum(index):
-    return index // BOARD_SIZE
+
+def getRowNum(width, index):
+    return math.floor(index / width)
 
 
-def getColNum(index):
-    return index % BOARD_SIZE
+def getColNum(width, index):
+    return index % width
 
+
+def isLeftColumn(width, index):
+    return index % width == 0
+
+
+def isRightColumn(width, index):
+    return isLeftColumn(width, index + 1)
+
+
+def isBottomRow(width, height, index):
+    return width * (height - 1) <= index and index < width * height
 
 """
     IMPORTANT NOTE
     The next________Index() functions wrap around the edges of the board
-    
+
     i.e. on a grid of size 3:
         nextIndexInRow(5) = 3
         nextIndexInColumn(7) = 1
@@ -32,46 +46,57 @@ def getColNum(index):
 """
 
 
-def nextIndexInRow(currentIndex):
-    rowNum = getRowNum(currentIndex)
-    nextIndex = currentIndex + 1
+# NOTE: height is not used
+# but requires the same signature as the nextIndexIn____ functions
+def nextIndexInRow(w, h, i):
+    rowNum = getRowNum(w, i)
+    nextIndex = i + 1
 
-    if getRowNum(nextIndex) != rowNum:
-        nextIndex -= BOARD_SIZE
-
-    return nextIndex
-
-
-def nextIndexInColumn(currentIndex):
-    nextIndex = currentIndex + BOARD_SIZE
-
-    if nextIndex > MAX_INDEX:
-        nextIndex -= MAX_INDEX + 1
+    if getRowNum(w, nextIndex) != rowNum:
+        nextIndex -= w
 
     return nextIndex
 
 
-def nextIndexInDiagonal(currentIndex):
-    # Right-most column
-    if (currentIndex + 1) % BOARD_SIZE == 0:
-        nextIndex = -1 * (currentIndex + 1) // BOARD_SIZE + BOARD_SIZE
-    # Bottom row, excluding bottom-right corner (because of previous if-statement)
-    elif currentIndex >= BOARD_SIZE * (BOARD_SIZE - 1):
-        nextIndex = -1 * BOARD_SIZE * (currentIndex - BOARD_SIZE ** 2 + 1)
+def nextIndexInColumn(w, h, i):
+    maxIndex = getMaxIndex(w, h)
+    nextIndex = i + w
+
+    if nextIndex > maxIndex:
+        nextIndex -= maxIndex + 1
+
+    return nextIndex
+
+
+def nextIndexInDiagonal(w, h, i):
+    if isRightColumn(w, i):
+        if i <= (w+1)*(w-1):
+            nextIndex = int((1/w) * (-i + pow(w, 2) - 1))
+        else: # w < h
+            nextIndex = i - (pow(w, 2) - 1)
+    elif isBottomRow(w, h, i):
+        if i <= (w+1)*(h-1):
+            nextIndex = w * (-i + (w+1)*(h-1))
+        else: # w > h
+            nextIndex = i - (w+1)*(h-1)
     else:
-        nextIndex = currentIndex + BOARD_SIZE + 1
+        nextIndex = i + w + 1
 
     return nextIndex
 
 
-def nextIndexInAntiDiagonal(currentIndex):
-    # Left-most column
-    if currentIndex % BOARD_SIZE == 0:
-        nextIndex = currentIndex // BOARD_SIZE
-    # Bottom row, excluding bottom-left corner (because of previous if-statement)
-    elif currentIndex >= BOARD_SIZE * (BOARD_SIZE - 1) + 1:
-        nextIndex = BOARD_SIZE * currentIndex - (BOARD_SIZE + 1) * (BOARD_SIZE - 1) ** 2
+def nextIndexInAntiDiagonal(w, h, i):
+    if isLeftColumn(w, i):
+        if i <= w*(w-1):
+            nextIndex = int(i/w)
+        else: # w < h
+            nextIndex = i - pow(w-1, 2)
+    elif isBottomRow(w, h, i):
+        if i >= h*(w-1):
+            nextIndex = w*i - (w-1)*(w*h - 1)
+        else: # w > h
+            nextIndex = i - (w-1)*(h-1)
     else:
-        nextIndex = currentIndex + BOARD_SIZE - 1
+        nextIndex = i + w - 1
 
     return nextIndex
