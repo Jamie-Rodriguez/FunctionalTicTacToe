@@ -278,59 +278,67 @@ class TestGameHelpers(TestCase):
 
 
 class TestGame(TestCase):
+    defaultPlayersInfo = [Player(Agent.RANDOM, Square.O),
+                          Player(Agent.RANDOM, Square.X)]
+
     def test_initialiseGame(self):
         width = 3
         height = 3
-        expectedOutput = State(win=False,
+        expectedOutput = State(playersInfo=self.defaultPlayersInfo,
+                               win=False,
                                turn=0,
                                board=[Square["EMPTY"]] * 9)
 
         self.assertEqual(expectedOutput, initialiseGameState(width, height))
 
     def test_setBoardState(self):
-        inputState = State(win=False,
+        inputState = State(playersInfo=self.defaultPlayersInfo,
+                           win=False,
                            turn=0,
                            board=[Square["EMPTY"]] * 3)
 
         inputBoard = [Square.EMPTY, Square.EMPTY, Square.X]
 
-        expectedOutput = State(win=False,
+        expectedOutput = State(playersInfo=self.defaultPlayersInfo,
+                               win=False,
                                turn=0,
                                board=inputBoard)
 
         self.assertEqual(expectedOutput, setBoardState(inputState, inputBoard))
 
     def test_setWinState(self):
-        inputState = State(win=False,
+        inputState = State(playersInfo=self.defaultPlayersInfo,
+                           win=False,
                            turn=0,
                            board=[Square.EMPTY, Square.EMPTY, Square.X])
 
-        expectedOutput = State(win=True,
+        expectedOutput = State(playersInfo=self.defaultPlayersInfo,
+                               win=True,
                                turn=inputState.turn,
                                board=inputState.board)
 
         self.assertEqual(expectedOutput, setWinState(inputState, True))
 
     def test_getCurrentPlayerInfo(self):
-        inputState = State(win=False,
+        inputState = State(playersInfo=self.defaultPlayersInfo,
+                           win=False,
                            turn=1,
                            board=[Square.EMPTY, Square.EMPTY, Square.X])
 
-        inputPlayersInfo = (Player(Agent.HUMAN,  Square.O),
-                            Player(Agent.RANDOM, Square.X))
+        expectedOutput = Player(Agent.RANDOM, Square.X)
 
-        expectedOutput = inputPlayersInfo[inputState.turn]
-
-        self.assertEqual(expectedOutput, getCurrentPlayerInfo(inputState, inputPlayersInfo))
+        self.assertEqual(expectedOutput, getCurrentPlayerInfo(inputState))
 
     def test_togglePlayerTurn(self):
-        inputState = State(win=False,
+        inputState = State(playersInfo=self.defaultPlayersInfo,
+                           win=False,
                            turn=1,
                            board=[Square.EMPTY, Square.EMPTY, Square.X])
 
         actualOutput = togglePlayerTurn(inputState)
 
-        expectedOutput = State(win=inputState.win,
+        expectedOutput = State(playersInfo=self.defaultPlayersInfo,
+                               win=inputState.win,
                                turn=0,
                                board=inputState.board)
 
@@ -338,7 +346,8 @@ class TestGame(TestCase):
 
         actualOutput = togglePlayerTurn(actualOutput)
 
-        expectedOutput = State(win=inputState.win,
+        expectedOutput = State(playersInfo=self.defaultPlayersInfo,
+                               win=inputState.win,
                                turn=1,
                                board=inputState.board)
 
@@ -416,18 +425,18 @@ class TestGame(TestCase):
                       Square.EMPTY, Square.O,     Square.O,
                       Square.X,     Square.EMPTY, Square.X]
         turnNoWin = 6
-        inputStateNoWin = State(False, turnNoWin, noWinBoard)
+        inputStateNoWin = State(self.defaultPlayersInfo, False, turnNoWin, noWinBoard)
         lastMoveNoWin = 6
 
         winBoard = [Square.EMPTY, Square.O, Square.X,
                     Square.EMPTY, Square.O, Square.O,
                     Square.X,     Square.X, Square.X]
         turnWin = 7
-        inputStateWin = State(False, turnWin, winBoard)
+        inputStateWin = State(self.defaultPlayersInfo, False, turnWin, winBoard)
         lastMoveWin = 7
 
-        expectedNoWinState = State(False, turnNoWin, noWinBoard)
-        expectedWinState = State(True, turnWin, winBoard)
+        expectedNoWinState = State(self.defaultPlayersInfo, False, turnNoWin, noWinBoard)
+        expectedWinState = State(self.defaultPlayersInfo, True, turnWin, winBoard)
 
         self.assertEqual(expectedNoWinState,
                          checkLastMoveForWin(boardDims,
@@ -445,18 +454,18 @@ class TestGame(TestCase):
                       Square.EMPTY, Square.X,     Square.EMPTY, Square.EMPTY,
                       Square.X,     Square.EMPTY, Square.EMPTY, Square.EMPTY]
         turnNoWin = 6
-        inputStateNoWin = State(False, turnNoWin, noWinBoard)
+        inputStateNoWin = State(self.defaultPlayersInfo, False, turnNoWin, noWinBoard)
         lastMoveNoWin = 3
 
         winBoard = [Square.X,     Square.O,     Square.O,     Square.O,
                     Square.EMPTY, Square.X,     Square.EMPTY, Square.EMPTY,
                     Square.X,     Square.EMPTY, Square.X,     Square.EMPTY]
         turnWin = 7
-        inputStateWin = State(False, turnWin, winBoard)
+        inputStateWin = State(self.defaultPlayersInfo, False, turnWin, winBoard)
         lastMoveWin = 10
 
-        expectedNoWinState = State(False, turnNoWin, noWinBoard)
-        expectedWinState = State(True, turnWin, winBoard)
+        expectedNoWinState = State(self.defaultPlayersInfo, False, turnNoWin, noWinBoard)
+        expectedWinState = State(self.defaultPlayersInfo, True, turnWin, winBoard)
 
         self.assertEqual(expectedNoWinState,
                          checkLastMoveForWin(boardDims,

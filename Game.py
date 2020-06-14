@@ -10,7 +10,7 @@ from GameHelpers import *
 # State.win is necessary if you are determining a win by searching the last move
 # It is important to do this on very large boards - only searching the last move every turn is more efficient
 # (can't afford to search the entire board for a win every turn with a large board)
-State = namedtuple("State", "win, turn, board")
+State = namedtuple("State", "playersInfo, win, turn, board")
 Player = namedtuple("Player", "agent, piece")
 BoardDims = namedtuple("BoardDims", "w, h")
 
@@ -20,25 +20,27 @@ def emptyBoard(width, height):
 
 
 def initialiseGameState(width, height):
-    return State(win=False,
+    return State(playersInfo=[Player(Agent.RANDOM, Square.O),
+                              Player(Agent.RANDOM, Square.X)],
+                 win=False,
                  turn=0,
                  board=emptyBoard(width, height))
 
 
 def setBoardState(state, board):
-    return State(state.win, state.turn, board)
+    return State(state.playersInfo, state.win, state.turn, board)
 
 
 def setWinState(state, win):
-    return State(win, state.turn, state.board)
+    return State(state.playersInfo, win, state.turn, state.board)
 
 
-def getCurrentPlayerInfo(state, playersInfo):
-    return playersInfo[state.turn]
+def getCurrentPlayerInfo(state):
+    return state.playersInfo[state.turn]
 
 
 def togglePlayerTurn(state):
-    return State(state.win, state.turn ^ 1, state.board)
+    return State(state.playersInfo, state.win, state.turn ^ 1, state.board)
 
 
 def getMoveFunctionForPlayer(player):
@@ -71,7 +73,7 @@ def getRandomMove():
 
 
 def getMoveFromPlayer(width, height, playersInfo, state):
-    currentPlayer = getCurrentPlayerInfo(state, playersInfo)
+    currentPlayer = getCurrentPlayerInfo(state)
 
     getMoveFunc = getMoveFunctionForPlayer(currentPlayer.agent)
 
@@ -151,7 +153,7 @@ if __name__ == '__main__':
     while not (state.win or boardFull(state.board)):
         state = togglePlayerTurn(state)
 
-        currentPlayer = getCurrentPlayerInfo(state, playersInfo)  # Not strictly necessary, but makes code more legible
+        currentPlayer = getCurrentPlayerInfo(state)  # Not strictly necessary, but makes code more legible
         printBoard(state.board, BOARD_WIDTH, BOARD_HEIGHT)
 
         move = getMoveFromPlayer(BOARD_WIDTH, BOARD_HEIGHT, playersInfo, state)
