@@ -346,6 +346,40 @@ class TestGame(TestCase):
         self.assertEqual(expectedOutput, setWinState(inputState, True))
 
 
+    def test_applyMoveToState(self):
+        boardDims = BoardDims(3, 3)
+        inputBoard = [Square.EMPTY, Square.EMPTY, Square.EMPTY,
+                      Square.O,     Square.EMPTY, Square.O,
+                      Square.EMPTY, Square.X,     Square.X]
+        inputState = State(playersInfo=self.defaultPlayersInfo,
+                      win=False,
+                      turn=1,
+                      board=inputBoard)
+
+        noWinMove = 4
+        noWinBoard = [Square.EMPTY, Square.EMPTY, Square.EMPTY,
+                      Square.O,     Square.X,     Square.O,
+                      Square.EMPTY, Square.X,     Square.X]
+        winningMove = 6
+        winBoard = [Square.EMPTY, Square.EMPTY, Square.EMPTY,
+                    Square.O,     Square.EMPTY, Square.O,
+                    Square.X,     Square.X,     Square.X]
+
+        expectedOutputNoWin = State(playersInfo=self.defaultPlayersInfo,
+                                    win=False,
+                                    turn=0,
+                                    board=noWinBoard)
+        expectedOutputWin = State(playersInfo=self.defaultPlayersInfo,
+                                  win=True,
+                                  turn=1,
+                                  board=winBoard)
+
+        self.assertEqual(expectedOutputNoWin,
+                         applyMoveToState(boardDims, inputState, noWinMove))
+        self.assertEqual(expectedOutputWin,
+                         applyMoveToState(boardDims, inputState, winningMove))
+
+
     def test_getCurrentPlayerInfo(self):
         inputState = State(playersInfo=self.defaultPlayersInfo,
                            win=False,

@@ -39,6 +39,18 @@ def setWinState(state, win):
     return State(state.playersInfo, win, state.turn, state.board)
 
 
+# This function will place the piece according to the current turn in state
+# This function will then update the turn afterwards (see checkLastMoveForWin())
+def applyMoveToState(boardDims, state, move):
+    currentTurn = state.turn
+    currentPiece = state.playersInfo[currentTurn].piece
+    board = placePiece(state.board, move, currentPiece)
+
+    newState = setBoardState(state, board)
+
+    return checkLastMoveForWin(boardDims, newState, move)
+
+
 def getCurrentPlayerInfo(state):
     return state.playersInfo[state.turn]
 
@@ -147,16 +159,11 @@ if __name__ == '__main__':
     printHelpGraphic(BOARD_WIDTH, BOARD_HEIGHT)
 
     while not (state.win or boardFull(state.board)):
-        currentPlayer = getCurrentPlayerInfo(state)  # Not strictly necessary, but makes code more legible
         printBoard(state.board, BOARD_WIDTH, BOARD_HEIGHT)
 
         move = getMoveFromPlayer(BOARD_WIDTH, BOARD_HEIGHT, state)
 
-        newBoard = placePiece(state.board, move, currentPlayer.piece)
-
-        state = setBoardState(state, newBoard)
-
-        state = checkLastMoveForWin(boardDims, state, move)
+        state = applyMoveToState(boardDims, state, move)
 
     printBoard(state.board, BOARD_WIDTH, BOARD_HEIGHT)
 
