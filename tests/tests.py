@@ -306,28 +306,6 @@ class TestGame(TestCase):
 
         self.assertEqual(expectedOutput, setBoardState(inputState, inputBoard))
 
-    def test_setWinState(self):
-        inputState = State(playersInfo=self.defaultPlayersInfo,
-                           win=False,
-                           turn=0,
-                           board=[Square.EMPTY, Square.EMPTY, Square.X])
-
-        expectedOutput = State(playersInfo=self.defaultPlayersInfo,
-                               win=True,
-                               turn=inputState.turn,
-                               board=inputState.board)
-
-        self.assertEqual(expectedOutput, setWinState(inputState, True))
-
-    def test_getCurrentPlayerInfo(self):
-        inputState = State(playersInfo=self.defaultPlayersInfo,
-                           win=False,
-                           turn=1,
-                           board=[Square.EMPTY, Square.EMPTY, Square.X])
-
-        expectedOutput = Player(Agent.RANDOM, Square.X)
-
-        self.assertEqual(expectedOutput, getCurrentPlayerInfo(inputState))
 
     def test_togglePlayerTurn(self):
         inputState = State(playersInfo=self.defaultPlayersInfo,
@@ -352,6 +330,32 @@ class TestGame(TestCase):
                                board=inputState.board)
 
         self.assertEqual(expectedOutput, actualOutput)
+
+
+    def test_setWinState(self):
+        inputState = State(playersInfo=self.defaultPlayersInfo,
+                           win=False,
+                           turn=0,
+                           board=[Square.EMPTY, Square.EMPTY, Square.X])
+
+        expectedOutput = State(playersInfo=self.defaultPlayersInfo,
+                               win=True,
+                               turn=inputState.turn,
+                               board=inputState.board)
+
+        self.assertEqual(expectedOutput, setWinState(inputState, True))
+
+
+    def test_getCurrentPlayerInfo(self):
+        inputState = State(playersInfo=self.defaultPlayersInfo,
+                           win=False,
+                           turn=1,
+                           board=[Square.EMPTY, Square.EMPTY, Square.X])
+
+        expectedOutput = Player(Agent.RANDOM, Square.X)
+
+        self.assertEqual(expectedOutput, getCurrentPlayerInfo(inputState))
+
 
     def test_getMoveFunctionForPlayer(self):
         self.assertEqual(getMoveFromHuman, getMoveFunctionForPlayer(Agent.HUMAN))

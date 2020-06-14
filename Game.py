@@ -31,16 +31,16 @@ def setBoardState(state, board):
     return State(state.playersInfo, state.win, state.turn, board)
 
 
+def togglePlayerTurn(state):
+    return State(state.playersInfo, state.win, state.turn ^ 1, state.board)
+
+
 def setWinState(state, win):
     return State(state.playersInfo, win, state.turn, state.board)
 
 
 def getCurrentPlayerInfo(state):
     return state.playersInfo[state.turn]
-
-
-def togglePlayerTurn(state):
-    return State(state.playersInfo, state.win, state.turn ^ 1, state.board)
 
 
 def getMoveFunctionForPlayer(player):
@@ -76,7 +76,7 @@ def getRandomMove():
     return index
 
 
-def getMoveFromPlayer(width, height, playersInfo, state):
+def getMoveFromPlayer(width, height, state):
     currentPlayer = getCurrentPlayerInfo(state)
 
     getMoveFunc = getMoveFunctionForPlayer(currentPlayer.agent)
@@ -139,12 +139,6 @@ def checkLastMoveForWin(boardDims, state, lastMove):
 
 
 if __name__ == '__main__':
-
-    playersInfo = (
-        Player(Agent.RANDOM, Square.O),
-        Player(Agent.RANDOM, Square.X)
-    )
-
     boardDims = BoardDims(BOARD_WIDTH, BOARD_HEIGHT)
 
     state = initialiseGameState(BOARD_WIDTH, BOARD_HEIGHT)
@@ -160,7 +154,7 @@ if __name__ == '__main__':
         currentPlayer = getCurrentPlayerInfo(state)  # Not strictly necessary, but makes code more legible
         printBoard(state.board, BOARD_WIDTH, BOARD_HEIGHT)
 
-        move = getMoveFromPlayer(BOARD_WIDTH, BOARD_HEIGHT, playersInfo, state)
+        move = getMoveFromPlayer(BOARD_WIDTH, BOARD_HEIGHT, state)
 
         newBoard = placePiece(state.board, move, currentPlayer.piece)
 
