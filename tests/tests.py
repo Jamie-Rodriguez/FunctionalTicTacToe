@@ -362,6 +362,15 @@ class TestGame(TestCase):
     # Can't test getMoveFromHuman(), getMoveFromAI() or getRandomMove()
     # and as a result, also can't test getMoveFromPlayer()
 
+
+    def test_getAvailableMoves(self):
+        inputBoard = [Square.EMPTY, Square.X, Square.EMPTY]
+        expectedOutput = [0, 2]
+        actualOutput = getAvailableMoves(inputBoard)
+
+        self.assertEqual(expectedOutput, actualOutput)
+
+
     def test_isThereWinInDirection3x3(self):
         boardDims = BoardDims(3, 3)
         board = [Square.EMPTY, Square.O, Square.X,

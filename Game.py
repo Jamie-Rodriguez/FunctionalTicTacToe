@@ -51,6 +51,10 @@ def getMoveFunctionForPlayer(player):
     }.get(player, lambda: print("Invalid agent selected"))  # Default case
 
 
+def getAvailableMoves(board):
+    return [i for i in range(len(board)) if board[i] == Square.EMPTY]
+
+
 # 'Move' functions must have same signature: IO () -> int
 
 def getMoveFromHuman():
