@@ -437,19 +437,17 @@ class TestGame(TestCase):
         noWinBoard = [Square.EMPTY, Square.O,     Square.X,
                       Square.EMPTY, Square.O,     Square.O,
                       Square.X,     Square.EMPTY, Square.X]
-        turnNoWin = 6
-        inputStateNoWin = State(self.defaultPlayersInfo, False, turnNoWin, noWinBoard)
+        inputStateNoWin = State(self.defaultPlayersInfo, False, 1, noWinBoard)
         lastMoveNoWin = 6
 
         winBoard = [Square.EMPTY, Square.O, Square.X,
                     Square.EMPTY, Square.O, Square.O,
                     Square.X,     Square.X, Square.X]
-        turnWin = 7
-        inputStateWin = State(self.defaultPlayersInfo, False, turnWin, winBoard)
+        inputStateWin = State(self.defaultPlayersInfo, False, 1, winBoard)
         lastMoveWin = 7
 
-        expectedNoWinState = State(self.defaultPlayersInfo, False, turnNoWin, noWinBoard)
-        expectedWinState = State(self.defaultPlayersInfo, True, turnWin, winBoard)
+        expectedNoWinState = State(self.defaultPlayersInfo, False, 0, noWinBoard)
+        expectedWinState = State(self.defaultPlayersInfo, True, 1, winBoard)
 
         self.assertEqual(expectedNoWinState,
                          checkLastMoveForWin(boardDims,
@@ -466,19 +464,17 @@ class TestGame(TestCase):
         noWinBoard = [Square.X,     Square.O,     Square.O,     Square.O,
                       Square.EMPTY, Square.X,     Square.EMPTY, Square.EMPTY,
                       Square.X,     Square.EMPTY, Square.EMPTY, Square.EMPTY]
-        turnNoWin = 6
-        inputStateNoWin = State(self.defaultPlayersInfo, False, turnNoWin, noWinBoard)
+        inputStateNoWin = State(self.defaultPlayersInfo, False, 0, noWinBoard)
         lastMoveNoWin = 3
 
         winBoard = [Square.X,     Square.O,     Square.O,     Square.O,
                     Square.EMPTY, Square.X,     Square.EMPTY, Square.EMPTY,
                     Square.X,     Square.EMPTY, Square.X,     Square.EMPTY]
-        turnWin = 7
-        inputStateWin = State(self.defaultPlayersInfo, False, turnWin, winBoard)
+        inputStateWin = State(self.defaultPlayersInfo, False, 1, winBoard)
         lastMoveWin = 10
 
-        expectedNoWinState = State(self.defaultPlayersInfo, False, turnNoWin, noWinBoard)
-        expectedWinState = State(self.defaultPlayersInfo, True, turnWin, winBoard)
+        expectedNoWinState = State(self.defaultPlayersInfo, False, 1, noWinBoard)
+        expectedWinState = State(self.defaultPlayersInfo, True, 1, winBoard)
 
         self.assertEqual(expectedNoWinState,
                          checkLastMoveForWin(boardDims,

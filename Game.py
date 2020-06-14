@@ -123,6 +123,7 @@ def isThereWinInDirection(boardDims, board, lastMove, getPiecesFunc):
     return win
 
 
+# Note: Updates the turn
 def checkLastMoveForWin(boardDims, state, lastMove):
     getPiecesFuncList = [
         getSquaresOnSameRow,
@@ -135,7 +136,7 @@ def checkLastMoveForWin(boardDims, state, lastMove):
 
     win = any(winInDirection is True for winInDirection in listOfWinsInEachDirection)
 
-    return setWinState(state, win)
+    return setWinState(state, win) if win else togglePlayerTurn(setWinState(state, win))
 
 
 if __name__ == '__main__':
@@ -145,12 +146,7 @@ if __name__ == '__main__':
 
     printHelpGraphic(BOARD_WIDTH, BOARD_HEIGHT)
 
-    # Toggle now so that the game starts with player 1 in the main loop upon first toggle
-    state = togglePlayerTurn(state)
-
     while not (state.win or boardFull(state.board)):
-        state = togglePlayerTurn(state)
-
         currentPlayer = getCurrentPlayerInfo(state)  # Not strictly necessary, but makes code more legible
         printBoard(state.board, BOARD_WIDTH, BOARD_HEIGHT)
 
