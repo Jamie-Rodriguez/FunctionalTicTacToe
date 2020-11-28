@@ -151,20 +151,26 @@ def checkLastMoveForWin(boardDims, state, lastMove):
     return setWinState(state, win) if win else togglePlayerTurn(setWinState(state, win))
 
 
-if __name__ == '__main__':
+def playGame(state):
+    if state.win or boardFull(state.board):
+        return state
+
     boardDims = BoardDims(BOARD_WIDTH, BOARD_HEIGHT)
-
-    state = initialiseGameState(BOARD_WIDTH, BOARD_HEIGHT)
-
-    printHelpGraphic(BOARD_WIDTH, BOARD_HEIGHT)
-
-    while not (state.win or boardFull(state.board)):
-        printBoard(state.board, BOARD_WIDTH, BOARD_HEIGHT)
-
-        move = getMoveFromPlayer(BOARD_WIDTH, BOARD_HEIGHT, state)
-
-        state = applyMoveToState(boardDims, state, move)
 
     printBoard(state.board, BOARD_WIDTH, BOARD_HEIGHT)
 
-    print("\nPlayer {} wins".format(state.turn + 1)) if state.win else print("Draw")
+    move = getMoveFromPlayer(BOARD_WIDTH, BOARD_HEIGHT, state)
+
+    return playGame(applyMoveToState(boardDims, state, move))
+
+
+if __name__ == '__main__':
+    initialState = initialiseGameState(BOARD_WIDTH, BOARD_HEIGHT)
+
+    printHelpGraphic(BOARD_WIDTH, BOARD_HEIGHT)
+
+    finalState = playGame(initialState)
+
+    printBoard(finalState.board, BOARD_WIDTH, BOARD_HEIGHT)
+
+    print("\nPlayer {} wins".format(finalState.turn + 1)) if finalState.win else print("Draw")
