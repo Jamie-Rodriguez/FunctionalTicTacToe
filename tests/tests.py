@@ -409,6 +409,12 @@ class TestGame(TestCase):
         self.assertEqual(expectedOutput, actualOutput)
 
 
+    def test_createPreRecordedPlayer(self):
+        getMove = createPreRecordedPlayer([2, 5])
+        self.assertEqual(getMove(), 2)
+        self.assertEqual(getMove(), 5)
+
+
     def test_isThereWinInDirection3x3(self):
         boardDims = BoardDims(3, 3)
         board = [Square.EMPTY, Square.O, Square.X,

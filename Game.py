@@ -73,6 +73,16 @@ def getMoveFromHuman():
     return input("Enter index to place piece:")
 
 
+def createPreRecordedPlayer(moves):
+    def createPreRecordedMoveGenerator(moves):
+        for i in range(len(moves)):
+            yield moves[i]
+
+    preRecordedPlayer = createPreRecordedMoveGenerator(moves)
+
+    return lambda: next(preRecordedPlayer)
+
+
 # TODO
 def getMoveFromAI():
     print("getMoveFromAI() - not yet implemented")
