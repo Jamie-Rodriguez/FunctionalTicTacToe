@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-from Constants import Square
-from Coordinates import *
+from constants import Square
+from coordinates import *
 
 
 def placePiece(board, index, piece):

@@ -1,7 +1,7 @@
 from unittest import TestCase
 from itertools import starmap
 
-from Game import *
+from game import *
 
 
 testBoard = [Square.O, Square.EMPTY, Square.EMPTY,

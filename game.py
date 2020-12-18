@@ -2,9 +2,9 @@
 from collections import namedtuple
 import random
 
-from Constants import Agent, BOARD_WIDTH, BOARD_HEIGHT
-from Display import *
-from GameHelpers import *
+from constants import Agent, BOARD_WIDTH, BOARD_HEIGHT
+from display import *
+from gameHelpers import *
 
 
 # State.win is necessary if you are determining a win by searching the last move
